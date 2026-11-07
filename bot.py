@@ -58,14 +58,29 @@ async def on_member_join(member):
 
     agora = datetime.now(ZoneInfo("America/Sao_Paulo"))
 
+    mensagem_boas_vindas = (
+        f"👋 Seja bem-vindo(a), {member.mention}!\n\n"
+        "🛠️ **Precisa de suporte?**\n"
+        "Se você precisa de ajuda, temos um servidor exclusivo. "
+        "Acesse o canal 🆘・<#1566465127115395099>, entre no servidor "
+        "e selecione o suporte adequado à sua necessidade.\n\n"
+        "📚 **Quer acessar as informações do EB?**\n"
+        "Todas as informações essenciais estão disponíveis no canal "
+        "🔗・<#1566465171373817877>. Não se esqueça de ler as regras "
+        "para evitar possíveis penalizações: <#1568738380794171472>."
+    )
+
     embed = discord.Embed(
         title="📥 NOVA ENTRADA NA PORTARIA",
-        description=f"Bem-vindo(a), {member.mention}!",
+        description=mensagem_boas_vindas,
         color=discord.Color.green(),
         timestamp=agora
     )
 
+    # Foto de perfil do novo membro na lateral
     embed.set_thumbnail(url=member.display_avatar.url)
+
+    # Bandeira do Brasil em imagem grande
     embed.set_image(url=FLAG_IMAGE_URL)
 
     embed.add_field(
