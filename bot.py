@@ -13,6 +13,8 @@ GUILD_ID = int(os.getenv("GUILD_ID", "1316621357974290472"))
 CHANNEL_ID = int(os.getenv("PORTARIA_CHANNEL_ID", "0"))
 CHANNEL_NAME = os.getenv("PORTARIA_CHANNEL_NAME", "Portaria")
 
+FLAG_IMAGE_URL = "https://wallpapers.com/images/featured/bandeira-do-brasil-0u6mt2bxb4w3rva0.jpg"
+
 intents = discord.Intents.default()
 intents.members = True
 
@@ -24,8 +26,12 @@ async def get_portaria_channel():
     channel = bot.get_channel(CHANNEL_ID) if CHANNEL_ID else None
 
     if channel is None:
+        server = bot.get_guild(GUILD_ID)
+        if server is None:
+            return None
+
         channel = discord.utils.get(
-            bot.get_guild(GUILD_ID).text_channels,
+            server.text_channels,
             name=CHANNEL_NAME
         )
 
@@ -60,18 +66,32 @@ async def on_member_join(member):
     )
 
     embed.set_thumbnail(url=member.display_avatar.url)
-    embed.add_field(name="👤 Usuário", value=member.name, inline=True)
-    embed.add_field(name="🆔 ID", value=str(member.id), inline=True)
+    embed.set_image(url=FLAG_IMAGE_URL)
+
+    embed.add_field(
+        name="👤 Usuário",
+        value=member.name,
+        inline=True
+    )
+
+    embed.add_field(
+        name="🆔 ID",
+        value=str(member.id),
+        inline=True
+    )
+
     embed.add_field(
         name="📅 Conta criada",
         value=discord.utils.format_dt(member.created_at, style="F"),
         inline=False
     )
+
     embed.add_field(
         name="🕒 Entrada",
         value=agora.strftime("%d/%m/%Y às %H:%M:%S"),
         inline=False
     )
+
     embed.set_footer(text="EB Bot • Sistema de Portaria")
 
     await channel.send(embed=embed)
@@ -85,6 +105,7 @@ async def on_member_join(member):
 @app_commands.default_permissions(manage_guild=True)
 @app_commands.checks.has_permissions(manage_guild=True)
 async def teste_entrada(interaction: discord.Interaction):
+
     if interaction.guild_id != GUILD_ID:
         await interaction.response.send_message(
             "Este comando não está disponível neste servidor.",
@@ -109,12 +130,24 @@ async def teste_entrada(interaction: discord.Interaction):
         color=discord.Color.blue(),
         timestamp=agora
     )
+
     embed.set_thumbnail(url=interaction.user.display_avatar.url)
-    embed.add_field(name="👤 Usuário", value=interaction.user.name)
-    embed.add_field(name="🆔 ID", value=str(interaction.user.id))
+    embed.set_image(url=FLAG_IMAGE_URL)
+
+    embed.add_field(
+        name="👤 Usuário",
+        value=interaction.user.name
+    )
+
+    embed.add_field(
+        name="🆔 ID",
+        value=str(interaction.user.id)
+    )
+
     embed.set_footer(text="EB Bot • Teste da Portaria")
 
     await channel.send(embed=embed)
+
     await interaction.response.send_message(
         "Teste enviado para a Portaria!",
         ephemeral=True
